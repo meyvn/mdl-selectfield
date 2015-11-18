@@ -1,6 +1,10 @@
 # mdl-selectfield
 Material Design Lite selectfield component (https://github.com/google/material-design-lite)
 
+## Live Example
+
+Check out the [jsfiddle](http://jsfiddle.net/zetta/mofbbamo/)
+
 ## Basic use
 To use any MDL component, you must include the minified CSS and JavaScript files using standard relative-path references 
 in the `<head>` section of the page, as described in the MDL Introduction.
