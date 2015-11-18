@@ -4,7 +4,7 @@
   "description": "mdl-selectfield for material-design-lite",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zetta83/mdl-selectfield.git"
+    "url": "git+https://github.com/MEYVN-digital/mdl-selectfield.git"
   },
   "keywords": [
     "material",
@@ -18,9 +18,9 @@
   "author": "Zapozdaev Anton <azapozdaev@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zetta83/mdl-selectfield/issues"
+    "url": "https://github.com/MEYVN-digital/mdl-selectfield/issues"
   },
-  "homepage": "https://github.com/zetta83/mdl-selectfield",
+  "homepage": "https://github.com/MEYVN-digital/mdl-selectfield",
   "devDependencies": {
     "bower": "^1.5.2",
     "gulp": "^3.9.0",
