@@ -1,0 +1,136 @@
+@import "../../bower_components/material-design-lite/src/variables";
+@import "../../bower_components/material-design-lite/src/mixins";
+
+.mdl-selectfield {
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+  width: 300px;
+  max-width: 100%;
+  margin: 0;
+  vertical-align: middle;
+  height: 48px;
+  line-height: 24px;
+  font-size: 16px;
+  padding: $input-text-vertical-spacing 0;
+}
+
+.mdl-selectfield__select {
+  display: none;
+}
+
+.mdl-selectfield__label {
+  color: rgba(0, 0, 0, 0.54);
+  vertical-align: middle;
+  bottom: 0;
+  font-size: $input-text-font-size;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  position: absolute;
+  display: block;
+  top: ($input-text-padding + $input-text-vertical-spacing/2);
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+  @include material-animation-default();
+
+  .mdl-selectfield.is-dirty &,
+  .mdl-selectfield.is-focused & {
+    color: rgba(0, 0, 0, 0.54);
+    font-size : $input-text-floating-label-fontsize;
+    top: $input-text-vertical-spacing - ($input-text-floating-label-fontsize + $input-text-padding);
+    visibility: visible;
+  }
+}
+
+.mdl-selectfield__box {
+  position: absolute;
+  top: 0; left: 0;
+  right: 0; bottom: 0px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  outline: none;
+  z-index: 100;
+  overflow: hidden;
+
+  & > i {
+    color: rgba(0, 0, 0, 0.54);
+    position: absolute;
+    top: 50%;
+    margin-top: -6px;
+    right: 0;
+    line-height: 24px;
+    width: 24px;
+    outline: none;
+    user-select: none;
+    cursor: default;
+    z-index: 99;
+  }
+
+  .mdl-selectfield__box-value {
+    position: absolute;
+    left: 0;
+    top: 22px;
+    font-size: 16px;
+    user-select: none;
+    cursor: default;
+    z-index: 99;
+    outline: none;
+    white-space: nowrap;
+    width: 92%;
+    overflow: hidden;
+  }
+
+  .mdl-selectfield.is-focused & {
+    outline: none;
+  }
+}
+
+.mdl-selectfield__list-option-box {
+  position: absolute;
+  left: 0;
+  top: 25px;
+  right: 0;
+  display: none;
+  background: $default-dropdown-bg-color;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  opacity: 0;
+  @include shadow-2dp();
+  transition: opacity $menu-fade-duration $animation-curve-default;
+  z-index: -1;
+  max-height: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  ul {
+    margin: 0;
+    padding: 5px 0;
+    list-style: none;
+
+    & > li {
+      font-size: 16px;
+      color: rgba(33, 33, 33, 0.87);
+      line-height: 19px;
+      min-height: 19px;
+      padding: 10px 14px 8px 14px;
+      transition: background-color $animation-curve-default;
+      cursor: pointer;
+      outline: none;
+
+      &:hover,
+      &.is-selected {
+        background-color: #f8f8f8;
+      }
+    }
+  }
+
+
+  .mdl-selectfield.is-focused & {
+    display: block;
+    opacity: 1;
+    z-index: 999;
+  }
+}
