@@ -9,18 +9,21 @@
   max-width: 100%;
   margin: 0;
   vertical-align: middle;
-  height: 48px;
-  line-height: 24px;
+  line-height: 20px;
   font-size: 16px;
   padding: $input-text-vertical-spacing 0;
 }
 
 .mdl-selectfield__select {
-  display: none;
+  visibility: visible;
+  font-size: $input-text-font-size;
+  margin: 2px 0 3px 0;
+  padding: 0;
+  width: 100%;
 }
 
 .mdl-selectfield__label {
-  color: rgba(0, 0, 0, 0.54);
+  color: $input-text-label-color;
   vertical-align: middle;
   bottom: 0;
   font-size: $input-text-font-size;
@@ -29,7 +32,7 @@
   pointer-events: none;
   position: absolute;
   display: block;
-  top: ($input-text-padding + $input-text-vertical-spacing/2);
+  top: $input-text-vertical-spacing + $input-text-padding;
   width: 100%;
   overflow: hidden;
   white-space: nowrap;
@@ -38,27 +41,45 @@
 
   .mdl-selectfield.is-dirty &,
   .mdl-selectfield.is-focused & {
-    color: rgba(0, 0, 0, 0.54);
+    color: $input-text-highlight-color;
     font-size : $input-text-floating-label-fontsize;
     top: $input-text-vertical-spacing - ($input-text-floating-label-fontsize + $input-text-padding);
+    visibility: visible;
+  }
+
+  .mdl-selectfield--floating-label.is-invalid & {
+    color: $input-text-error-color;
+  }
+}
+
+.mdl-selectfield__error {
+  color: $input-text-error-color;
+  position: absolute;
+  font-size: $input-text-floating-label-fontsize;
+  margin-top: 3px;
+  visibility: hidden;
+  display: block;
+  white-space: nowrap;
+
+  .mdl-selectfield.is-invalid & {
     visibility: visible;
   }
 }
 
 .mdl-selectfield__box {
   position: absolute;
-  top: 0; left: 0;
-  right: 0; bottom: 0px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  top: $input-text-vertical-spacing + $input-text-padding; left: 0;
+  right: 0; bottom: ($input-text-vertical-spacing - 1);
+  border-bottom: 1px solid $input-text-bottom-border-color;
   outline: none;
   z-index: 100;
   overflow: hidden;
 
   & > i {
-    color: rgba(0, 0, 0, 0.54);
+    color: $input-text-label-color;
     position: absolute;
     top: 50%;
-    margin-top: -6px;
+    margin-top: ($input-text-vertical-spacing/2 + $input-text-padding)*-1;
     right: 0;
     line-height: 24px;
     width: 24px;
@@ -66,12 +87,16 @@
     user-select: none;
     cursor: default;
     z-index: 99;
+
+    .mdl-selectfield.is-invalid & {
+      color: $input-text-error-color;
+    }
   }
 
   .mdl-selectfield__box-value {
     position: absolute;
     left: 0;
-    top: 22px;
+    top: 0;
     font-size: 16px;
     user-select: none;
     cursor: default;
@@ -85,12 +110,16 @@
   .mdl-selectfield.is-focused & {
     outline: none;
   }
+
+  .mdl-selectfield.is-invalid & {
+    border-color: $input-text-error-color;
+  }
 }
 
 .mdl-selectfield__list-option-box {
   position: absolute;
   left: 0;
-  top: 25px;
+  top: $input-text-vertical-spacing + $input-text-padding;
   right: 0;
   display: none;
   background: $default-dropdown-bg-color;
@@ -102,9 +131,11 @@
   @include shadow-2dp();
   transition: opacity $menu-fade-duration $animation-curve-default;
   z-index: -1;
+  min-width: 124px;
   max-height: 300px;
   overflow-x: hidden;
   overflow-y: auto;
+
   ul {
     margin: 0;
     padding: 5px 0;

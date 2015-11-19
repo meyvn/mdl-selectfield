@@ -14,7 +14,7 @@
                     <div class="mdl-grid">
                         <div class="mdl-color--whitemdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
                             <div class="mdl-cell mdl-cell--12-col">
-                                <!-- Simple Textfield -->
+                                <!-- Simple Selectfield -->
                                 <form action="#">
                                     <div class="mdl-selectfield mdl-js-selectfield">
                                         <select id="profile_information_form_country_id" name="profile_information_form_country" class="mdl-selectfield__select">
@@ -292,6 +292,36 @@
                                         <label for="profile_information_form_country_id" class="mdl-selectfield__label">Country</label>
                                     </div>
                                 </form>
+                            </div>
+                        </div>
+                        <div class="mdl-color--whitemdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+                            <div class="mdl-cell mdl-cell--2-col">
+                                <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label" style="width: 100px">
+                                    <select id="profile_information_form_dob_2i" name="profile_information_form[dob(2i)]" class="date required mdl-selectfield__select" required>
+                                        <option value=""></option>
+                                        <option value="1">January</option>
+                                        <option value="2">February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">August</option>
+                                        <option value="9">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
+                                    </select>
+                                    <label for="profile_information_form_dob_2i" class="mdl-selectfield__label">MM</label>
+                                    <span class="mdl-selectfield__error">Input is not a empty!</span>
+                                </div>
+                            </div>
+                            <div class="mdl-cell mdl-cell--10-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="sample4">
+                                    <label class="mdl-textfield__label" for="sample4">Number...</label>
+                                    <span class="mdl-textfield__error">Input is not a number!</span>
+                                </div>
                             </div>
                         </div>
                     </div>

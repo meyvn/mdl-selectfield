@@ -29,6 +29,7 @@
     "gulp-sourcemaps": "^1.5.2",
     "gulp-uglifyjs": "^0.6.2",
     "gulp-connect": "^2.2.0",
+    "gulp-autoprefixer": "^2.0.0",
     "gulp-load-plugins": "^0.10.0"
   },
   "dependencies": {

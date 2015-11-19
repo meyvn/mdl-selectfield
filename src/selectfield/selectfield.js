@@ -92,7 +92,21 @@
     if(!itemSelected) {
       this.element_.classList.remove(this.CssClasses_.IS_DIRTY);
     }
+
+    this.checkValidity();
   };
+
+  MaterialSelectfield.prototype.checkValidity = function() {
+    if (this.select_.validity) {
+      if (this.select_.validity.valid) {
+        this.element_.classList.remove(this.CssClasses_.IS_INVALID);
+      } else {
+        this.element_.classList.add(this.CssClasses_.IS_INVALID);
+      }
+    }
+  };
+  MaterialSelectfield.prototype['checkValidity'] =
+    MaterialSelectfield.prototype.checkValidity;
 
   MaterialSelectfield.prototype.toggle = function (event) {
     if (this.element_.classList.contains(this.CssClasses_.IS_FOCUSED)) {
@@ -275,10 +289,11 @@
       this.selectedOptionValue_ = value;
       this.element_.appendChild(this.selectedOption_);
 
+      var invalid = this.element_.classList.contains(this.CssClasses_.IS_INVALID);
 
       if (this.select_) {
         this.options_ = this.select_.querySelectorAll('option');
-        this.select_.style.display = "none";
+        this.select_.style.visibility = "hidden";
 
         if (this.options_.length) {
           this.boundSelectedHandler = this.onSelected_.bind(this);
@@ -316,8 +331,12 @@
 
       this.element_.addEventListener('click', this.boundClickHandler);
 
-      //this.selectedOption_.addEventListener('focus', this.boundFocusHandler);
-      //this.selectedOption_.addEventListener('blur', this.boundBlurHandler);
+      if (invalid) {
+        this.element_.classList.add(this.CssClasses_.IS_INVALID);
+      }
+
+      //this.selectedOption_.addEventListener('focus', this.boundClickHandler);
+      //this.selectedOption_.addEventListener('blur', this.boundClickHandler);
     }
   };
 
