@@ -16,8 +16,8 @@
                             <div class="mdl-cell mdl-cell--12-col">
                                 <!-- Simple Selectfield -->
                                 <form action="#">
-                                    <div class="mdl-selectfield mdl-js-selectfield">
-                                        <select id="profile_information_form_country_id" name="profile_information_form_country" class="mdl-selectfield__select">
+                                    <div class="mdl-selectfield mdl-js-selectfield mdl-textfield--floating-label">
+                                        <select id="profile_information_form_country_id" name="profile_information_form_country" class="mdl-selectfield__select" required>
                                             <option value=""></option>
                                             <option value="192">Abkhazia</option>
                                             <option value="1">Afghanistan</option>
@@ -290,6 +290,7 @@
                                             <option value="191">Zimbabwe</option>
                                         </select>
                                         <label for="profile_information_form_country_id" class="mdl-selectfield__label">Country</label>
+                                        <span class="mdl-selectfield__error">Input is not a empty!</span>
                                     </div>
                                 </form>
                             </div>
