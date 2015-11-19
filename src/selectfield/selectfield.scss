@@ -150,6 +150,7 @@
       transition: background-color $animation-curve-default;
       cursor: pointer;
       outline: none;
+      box-sizing: content-box;
 
       &:hover,
       &.is-selected {
