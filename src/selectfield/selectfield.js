@@ -56,6 +56,17 @@
       var option = this.options_[event.target.dataset.value];
       this.selectedOptionValue_.textContent = option.textContent;
       option.selected = true;
+
+      //fire event change
+      if (document.createEvent) {
+        var evt = document.createEvent("HTMLEvents");
+        evt.initEvent("change", false, true);
+        this.select_.dispatchEvent(evt);
+      }
+      else {
+        this.select_.fireEvent("onchange");
+      }
+
       if(option.textContent !== "") {
         this.element_.classList.add(this.CssClasses_.IS_DIRTY);
         var selectedItem = this.listOptionBox_.querySelector('.' + this.CssClasses_.IS_SELECTED);
@@ -339,6 +350,28 @@
       //this.selectedOption_.addEventListener('blur', this.boundClickHandler);
     }
   };
+
+  MaterialSelectfield.prototype.mdlDowngrade_ = function() {
+    this.element_.removeEventListener('click', this.boundClickHandler);
+    if (this.boundSelectedHandler && this.options_.length) {
+      var items = this.listOptionBox_.querySelectorAll("li");
+
+      for (var i = 0; i < items.length; i++) {
+        items[i].removeEventListener('click', this.boundSelectedHandler);
+      }
+    }
+  };
+
+  /**
+   * Public alias for the downgrade method.
+   *
+   * @public
+   */
+  MaterialSelectfield.prototype.mdlDowngrade =
+    MaterialSelectfield.prototype.mdlDowngrade_;
+
+  MaterialSelectfield.prototype['mdlDowngrade'] =
+    MaterialSelectfield.prototype.mdlDowngrade;
 
   componentHandler.register({
     constructor: MaterialSelectfield,
