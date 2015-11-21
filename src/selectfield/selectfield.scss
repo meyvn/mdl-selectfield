@@ -47,6 +47,10 @@
     visibility: visible;
   }
 
+  .mdl-selectfield.is-disabled.is-disabled & {
+    color: $input-text-disabled-text-color;
+  }
+
   .mdl-selectfield--floating-label.is-invalid & {
     color: $input-text-error-color;
   }
@@ -113,6 +117,11 @@
 
   .mdl-selectfield.is-invalid & {
     border-color: $input-text-error-color;
+  }
+
+  .mdl-selectfield.is-disabled & {
+    border-bottom: 1px dotted $input-text-disabled-color;
+    color: $input-text-disabled-text-color;
   }
 }
 

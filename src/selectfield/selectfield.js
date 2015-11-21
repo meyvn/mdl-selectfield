@@ -31,10 +31,6 @@
     DOWN_ARROW: 40
   };
 
-  MaterialSelectfield.prototype.createListOption_ = function () {
-
-  };
-
   MaterialSelectfield.prototype.setDefaults_ = function () {
     this.options_ = [];
     this.optionsMap_ = {};
@@ -104,6 +100,7 @@
       this.element_.classList.remove(this.CssClasses_.IS_DIRTY);
     }
 
+    this.checkDisabled();
     this.checkValidity();
   };
 
@@ -119,6 +116,38 @@
   MaterialSelectfield.prototype['checkValidity'] =
     MaterialSelectfield.prototype.checkValidity;
 
+  MaterialSelectfield.prototype.checkDisabled = function() {
+    if (this.select_.disabled) {
+      this.element_.classList.add(this.CssClasses_.IS_DISABLED);
+    } else {
+      this.element_.classList.remove(this.CssClasses_.IS_DISABLED);
+    }
+  };
+  MaterialSelectfield.prototype['checkDisabled'] =
+    MaterialSelectfield.prototype.checkDisabled;
+
+  /**
+   * Disable select field.
+   *
+   * @public
+   */
+  MaterialSelectfield.prototype.disable = function() {
+    this.select_.disabled = true;
+    this.update_();
+  };
+  MaterialSelectfield.prototype['disable'] = MaterialSelectfield.prototype.disable;
+
+  /**
+   * Enable select field.
+   *
+   * @public
+   */
+  MaterialSelectfield.prototype.enable = function() {
+    this.select_.disabled = false;
+    this.update_();
+  };
+  MaterialSelectfield.prototype['enable'] = MaterialSelectfield.prototype.enable;
+
   MaterialSelectfield.prototype.toggle = function (event) {
     if (this.element_.classList.contains(this.CssClasses_.IS_FOCUSED)) {
       this.hide_();
@@ -128,6 +157,9 @@
   };
 
   MaterialSelectfield.prototype.show_ = function(event) {
+    this.checkDisabled();
+    if(this.element_.classList.contains(this.CssClasses_.IS_DISABLED)) return;
+
     this.element_.classList.add(this.CssClasses_.IS_FOCUSED);
     this.closing_ = false;
     this.strSearch_ = "";
@@ -336,18 +368,13 @@
           this.listOptionBox_ = listOptionBox;
         }
       }
-      //this.boundFocusHandler = this.onFocus_.bind(this);
-      //this.boundBlurHandler = this.onBlur_.bind(this);
+
       this.boundClickHandler = this.onclick_.bind(this);
-
       this.element_.addEventListener('click', this.boundClickHandler);
-
       if (invalid) {
         this.element_.classList.add(this.CssClasses_.IS_INVALID);
       }
-
-      //this.selectedOption_.addEventListener('focus', this.boundClickHandler);
-      //this.selectedOption_.addEventListener('blur', this.boundClickHandler);
+      this.checkDisabled();
     }
   };
 
