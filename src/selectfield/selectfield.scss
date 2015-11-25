@@ -37,10 +37,17 @@
   overflow: hidden;
   white-space: nowrap;
   text-align: left;
-  @include material-animation-default();
 
-  .mdl-selectfield.is-dirty &,
-  .mdl-selectfield.is-focused & {
+  .mdl-selectfield.is-dirty & {
+    visibility: hidden;
+  }
+
+  .mdl-selectfield--floating-label & {
+    @include material-animation-default();
+  }
+
+  .mdl-selectfield--floating-label.is-dirty &,
+  .mdl-selectfield--floating-label.is-focused & {
     color: $input-text-highlight-color;
     font-size : $input-text-floating-label-fontsize;
     top: $input-text-vertical-spacing - ($input-text-floating-label-fontsize + $input-text-padding);
@@ -51,7 +58,7 @@
     color: $input-text-disabled-text-color;
   }
 
-  .mdl-selectfield--floating-label.is-invalid & {
+  .mdl-selectfield.is-invalid & {
     color: $input-text-error-color;
   }
 }
