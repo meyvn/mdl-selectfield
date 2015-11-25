@@ -54,14 +54,18 @@
       option.selected = true;
 
       //fire event change
-      if (document.createEvent) {
-        var evt = document.createEvent("HTMLEvents");
-        evt.initEvent("change", false, true);
-        this.select_.dispatchEvent(evt);
+      var evt;
+      if(typeof window.Event == "function") {
+        evt = new Event('change', {
+          bubbles: true
+          ,cancelable: true
+        });
       }
-      else {
-        this.select_.fireEvent("onchange");
+      else if(typeof document.createEvent == "function") {
+        evt = document.createEvent("HTMLEvents");
+        evt.initEvent("change", true, true);
       }
+      evt && this.select_.dispatchEvent(evt);
 
       if(option.textContent !== "") {
         this.element_.classList.add(this.CssClasses_.IS_DIRTY);
