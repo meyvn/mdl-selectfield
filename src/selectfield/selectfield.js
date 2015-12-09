@@ -49,7 +49,7 @@
 
   MaterialSelectfield.prototype.onSelected_ = function (event) {
     if(event.target && event.target.nodeName == "LI") {
-      var option = this.options_[event.target.dataset.value];
+      var option = this.options_[event.target.getAttribute('data-value')];
       this.selectedOptionValue_.textContent = option.textContent;
       option.selected = true;
 
@@ -356,7 +356,7 @@
             this.optionsArr_.push(itemText);
             var li = document.createElement('li');
             li.textContent = item.textContent;
-            li.dataset.value = i;
+            li.setAttribute('data-value', i);
             li.tabIndex = '-1';
             li.addEventListener('click', this.boundSelectedHandler);
             ul.appendChild(li);
