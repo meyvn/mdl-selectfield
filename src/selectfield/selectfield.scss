@@ -85,6 +85,7 @@
   outline: none;
   z-index: 100;
   overflow: hidden;
+  cursor: pointer;
 
   & > i {
     color: $input-text-label-color;
