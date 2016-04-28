@@ -9,7 +9,8 @@
       bulkSass = require('gulp-sass-bulk-import'),
       sassFiles = ['./src/**/*.scss'],
       uglify = require('gulp-uglify'),
-      jsFiles = ['src/**/*.js'];
+      pump = require('pump'),
+      jsFiles = ['src/selectfield/*.js'];
 
   var AUTOPREFIXER_BROWSERS = [
     'ie >= 10',
@@ -46,11 +47,18 @@
       .pipe(gulp.dest('./'));
   });
 
-  gulp.task('uglify', function() {
-    gulp
-      .src(jsFiles)
-      .pipe(uglify('mdl-selectfield.min.js', {outSourceMap: true}))
-      .pipe(gulp.dest('./'));
+  gulp.task('uglify', function(cb) {
+    pump([
+      gulp.src(jsFiles)
+      ,sourcemaps.init()
+      ,uglify({outSourceMap: true})
+      ,rename({
+        basename: 'mdl-selectfield',
+        suffix: '.min'
+      })
+      ,sourcemaps.write('./')
+      ,gulp.dest('./')
+    ], cb);
   });
 
   function watch() {
