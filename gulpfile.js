@@ -6,8 +6,9 @@
       rename = require('gulp-rename'),
       sass = require('gulp-sass'),
       sourcemaps = require('gulp-sourcemaps'),
+      bulkSass = require('gulp-sass-bulk-import'),
       sassFiles = ['./src/**/*.scss'],
-      uglify = require('gulp-uglifyjs'),
+      uglify = require('gulp-uglify'),
       jsFiles = ['src/**/*.js'];
 
   var AUTOPREFIXER_BROWSERS = [
@@ -25,8 +26,16 @@
   gulp.task('sass', function () {
     gulp
       .src(sassFiles)
+      .pipe(bulkSass())
       .pipe(sourcemaps.init())
-      .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+      .pipe(
+        sass({
+          includePaths: [
+            './bower_components'
+            ,'./node_modules'
+          ],
+          outputStyle: 'compressed'
+        }).on('error', sass.logError))
       .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
       .pipe(rename(function(path) {
         path.dirname = '';
@@ -40,9 +49,7 @@
   gulp.task('uglify', function() {
     gulp
       .src(jsFiles)
-      .pipe(uglify('mdl-selectfield.min.js', {
-        outSourceMap: true
-      }))
+      .pipe(uglify('mdl-selectfield.min.js', {outSourceMap: true}))
       .pipe(gulp.dest('./'));
   });
 
