@@ -37,6 +37,7 @@
     this.optionsArr_ = [];
     this.closing_ = true;
     this.keyDownTimerId_ = null;
+    this.observer_ = null;
   };
 
   MaterialSelectfield.prototype.onFocus_ = function (event) {
@@ -47,9 +48,15 @@
     this.element_.classList.remove(this.CssClasses_.IS_FOCUSED);
   };
 
-  MaterialSelectfield.prototype.onSelected_ = function (event) {
+  MaterialSelectfield.prototype.onSelected_ = function (event) {    
     if(event.target && event.target.nodeName == "LI") {
       var option = this.options_[event.target.getAttribute('data-value')];
+
+      if(option.disabled) {
+        event.stopPropagation();
+        return false;
+      }
+
       this.selectedOptionValue_.textContent = option.textContent;
       option.selected = true;
 
@@ -152,11 +159,26 @@
   };
   MaterialSelectfield.prototype['enable'] = MaterialSelectfield.prototype.enable;
 
+  MaterialSelectfield.prototype.isDescendant_ = function (parent, child) {
+    var node = child.parentNode;
+    while (node != null) {
+      if (node == parent) {
+        return true;
+      }
+      node = node.parentNode;
+    }
+    return false;
+  };
+
   MaterialSelectfield.prototype.toggle = function (event) {
-    if (this.element_.classList.contains(this.CssClasses_.IS_FOCUSED)) {
-      this.hide_();
-    } else {
-      this.show_(event);
+    if(!this.element_.classList.contains(this.CssClasses_.IS_FOCUSED)) {
+      this.show_(event)
+    }
+    else if(event.target && event.target.nodeName == "LI" && this.isDescendant_(this.listOptionBox_, event.target)) {
+      this.onSelected_(event)
+    }
+    else {
+      this.hide_()
     }
   };
 
@@ -168,11 +190,11 @@
     this.closing_ = false;
     this.strSearch_ = "";
 
-    var selectedItem = this.listOptionBox_.querySelector('.' + this.CssClasses_.IS_SELECTED);
+    var selectedItem = this.listOptionBox_ && this.listOptionBox_.querySelector('.' + this.CssClasses_.IS_SELECTED);
     if(selectedItem) selectedItem.parentElement.parentElement.scrollTop = selectedItem.offsetTop;
 
     this.boundKeyDownHandler_ = this.onKeyDown_.bind(this);
-    this.boundClickDocHandler_ = function(e) {
+    this.boundClickDocHandler_ = function(e) {      
       if (e !== event && !this.closing_ && !(e.target.parentNode === this.element_ || e.target.parentNode === this.selectedOption_) ) {
         this.hide_();
       }
@@ -183,8 +205,7 @@
   };
 
   MaterialSelectfield.prototype.onKeyDown_ = function(evt) {
-    var items = this.listOptionBox_.querySelectorAll('li' +
-      ':not([disabled])');
+    var items = this.listOptionBox_.querySelectorAll('li:not([disabled])');
 
     if (items && items.length > 0 && !this.closing_) {
       var currentIndex = Array.prototype.slice.call(items).indexOf(this.listOptionBox_.querySelectorAll('.' + this.CssClasses_.IS_SELECTED)[0]);
@@ -318,6 +339,8 @@
 
   MaterialSelectfield.prototype.init = function () {
     if (this.element_) {
+      this.element_.classList.remove(this.CssClasses_.IS_DIRTY);
+      this.lastSelectedItem_ = null;
       this.label_ = this.element_.querySelector('.' + this.CssClasses_.LABEL);
       this.select_ = this.element_.querySelector('.' + this.CssClasses_.SELECT);
       var selectedOption = document.createElement('div');
@@ -338,40 +361,7 @@
 
       var invalid = this.element_.classList.contains(this.CssClasses_.IS_INVALID);
 
-      if (this.select_) {
-        this.options_ = this.select_.querySelectorAll('option');
-        this.select_.style.visibility = "hidden";
-
-        if (this.options_.length) {
-          this.boundSelectedHandler = this.onSelected_.bind(this);
-          var listOptionBox = document.createElement('div');
-          listOptionBox.classList.add(this.CssClasses_.LIST_OPTION_BOX);
-          listOptionBox.tabIndex = '-1';
-          var ul = document.createElement('ul');
-          ul.tabIndex = '-1';
-          for (var i = 0; i < this.options_.length; i++) {
-            var item = this.options_[i]
-              ,itemText = (item.textContent || '').toUpperCase().replace(/( )|(\n)/g, "");
-            this.optionsMap_[itemText] = i;
-            this.optionsArr_.push(itemText);
-            var li = document.createElement('li');
-            li.textContent = item.textContent;
-            li.setAttribute('data-value', i);
-            li.tabIndex = '-1';
-            li.addEventListener('click', this.boundSelectedHandler);
-            ul.appendChild(li);
-            if(item.selected && item.textContent !== "") {
-              this.element_.classList.add(this.CssClasses_.IS_DIRTY);
-              this.selectedOptionValue_.textContent = item.textContent;
-              li.classList.add(this.CssClasses_.IS_SELECTED);
-            }
-          }
-
-          listOptionBox.appendChild(ul);
-          this.element_.appendChild(listOptionBox);
-          this.listOptionBox_ = listOptionBox;
-        }
-      }
+      this.makeElements_();
 
       this.boundClickHandler = this.onclick_.bind(this);
       this.element_.addEventListener('click', this.boundClickHandler);
@@ -382,15 +372,84 @@
     }
   };
 
-  MaterialSelectfield.prototype.mdlDowngrade_ = function() {
-    this.element_.removeEventListener('click', this.boundClickHandler);
-    if (this.boundSelectedHandler && this.options_.length) {
-      var items = this.listOptionBox_.querySelectorAll("li");
+  MaterialSelectfield.prototype.refreshOptions = function () {
+    this.mdlDowngrade_();
+    this.setDefaults_();
+    this.init();
+    //this.makeElements_();
+  };
 
-      for (var i = 0; i < items.length; i++) {
-        items[i].removeEventListener('click', this.boundSelectedHandler);
+  MaterialSelectfield.prototype.clearElements_ = function () {
+
+  };
+
+  MaterialSelectfield.prototype.makeElements_ = function () {
+    if (this.select_) {
+      this.options_ = this.select_.querySelectorAll('option');
+      this.select_.style.visibility = "hidden";
+
+      if(this.options_.length == 0) {
+        this.options_ = [document.createElement('option')]
+      }
+
+      if (this.options_.length) {
+        var listOptionBox = document.createElement('div')
+          ,ul = '<ul tabindex="-1">'
+          ,liHTML = ''
+          ;
+
+        listOptionBox.classList.add(this.CssClasses_.LIST_OPTION_BOX);
+        listOptionBox.tabIndex = '-1';
+
+        for (var i = 0; i < this.options_.length; i++) {
+          var item = this.options_[i]
+            ,itemText = (item.textContent || '').toUpperCase().replace(/( )|(\n)/g, "")
+            ,liClass = ''
+            ;
+
+          this.optionsMap_[itemText] = i;
+          this.optionsArr_.push(itemText);
+
+          if(item.selected && item.textContent !== "") {
+            this.element_.classList.add(this.CssClasses_.IS_DIRTY);
+            this.selectedOptionValue_.textContent = item.textContent;
+            liClass += this.CssClasses_.IS_SELECTED;
+          }
+
+          if(item.disabled) {
+            liClass += liClass != '' ? ' ' + this.CssClasses_.IS_DISABLED : this.CssClasses_.IS_DISABLED
+          }
+
+          liHTML += '<li class="' + liClass + '" data-value="'+ i +'" tabindex="-1">' + item.textContent + '</li>';
+        }
+
+        ul += liHTML + '</ul>';
+
+        listOptionBox.innerHTML = ul;
+        this.element_.appendChild(listOptionBox);
+        this.listOptionBox_ = listOptionBox;
+
+        if(window.MutationObserver) {
+          this.observer_ = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+              if (mutation.type == 'childList') {
+                this.refreshOptions()
+              }
+            }.bind(this));
+          }.bind(this));
+          this.observer_.observe(this.select_, {attributes: true, childList: true, characterData: true})
+        }
       }
     }
+  };
+
+  MaterialSelectfield.prototype.mdlDowngrade_ = function() {
+    this.element_.removeEventListener('click', this.boundClickHandler);
+    this.listOptionBox_ && this.element_.removeChild(this.listOptionBox_);
+    this.selectedOption_ && this.element_.removeChild(this.selectedOption_);
+    this.element_.removeAttribute('data-upgraded');
+    this.select_.style.visibility = "visible";
+    this.observer_ && this.observer_.disconnect();
   };
 
   /**

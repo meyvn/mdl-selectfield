@@ -173,6 +173,12 @@
       &.is-selected {
         background-color: #f8f8f8;
       }
+
+      &.is-disabled {
+        color: $input-text-disabled-text-color;
+        background-color: $default-dropdown-bg-color;
+        cursor: default;
+      }
     }
   }
 
