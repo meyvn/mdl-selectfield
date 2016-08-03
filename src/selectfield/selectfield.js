@@ -45,10 +45,11 @@
   };
 
   MaterialSelectfield.prototype.onBlur_ = function (event) {
-    this.element_.classList.remove(this.CssClasses_.IS_FOCUSED);
+    this.closing_ = true;
+    this.hide_();
   };
 
-  MaterialSelectfield.prototype.onSelected_ = function (event) {    
+  MaterialSelectfield.prototype.onSelected_ = function (event) {
     if(event.target && event.target.nodeName == "LI") {
       var option = this.options_[event.target.getAttribute('data-value')];
 
@@ -125,7 +126,7 @@
     }
   };
   MaterialSelectfield.prototype['checkValidity'] =
-    MaterialSelectfield.prototype.checkValidity;
+  MaterialSelectfield.prototype.checkValidity;
 
   MaterialSelectfield.prototype.checkDisabled = function() {
     if (this.select_.disabled) {
@@ -135,13 +136,13 @@
     }
   };
   MaterialSelectfield.prototype['checkDisabled'] =
-    MaterialSelectfield.prototype.checkDisabled;
+  MaterialSelectfield.prototype.checkDisabled;
 
   /**
-   * Disable select field.
-   *
-   * @public
-   */
+  * Disable select field.
+  *
+  * @public
+  */
   MaterialSelectfield.prototype.disable = function() {
     this.select_.disabled = true;
     this.update_();
@@ -149,10 +150,10 @@
   MaterialSelectfield.prototype['disable'] = MaterialSelectfield.prototype.disable;
 
   /**
-   * Enable select field.
-   *
-   * @public
-   */
+  * Enable select field.
+  *
+  * @public
+  */
   MaterialSelectfield.prototype.enable = function() {
     this.select_.disabled = false;
     this.update_();
@@ -194,7 +195,7 @@
     if(selectedItem) selectedItem.parentElement.parentElement.scrollTop = selectedItem.offsetTop;
 
     this.boundKeyDownHandler_ = this.onKeyDown_.bind(this);
-    this.boundClickDocHandler_ = function(e) {      
+    this.boundClickDocHandler_ = function(e) {
       if (e !== event && !this.closing_ && !(e.target.parentNode === this.element_ || e.target.parentNode === this.selectedOption_) ) {
         this.hide_();
       }
@@ -321,11 +322,11 @@
 
   MaterialSelectfield.prototype.validKeyCode_ = function(keycode) {
     return (keycode > 47 && keycode < 58)   || // number keys
-      keycode == 32 || keycode == 13   || // spacebar & return key(s) (if you want to allow carriage returns)
-      (keycode > 64 && keycode < 91)   || // letter keys
-      (keycode > 95 && keycode < 112)  || // numpad keys
-      (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
-      (keycode > 218 && keycode < 223);   // [\]' (in order)
+    keycode == 32 || keycode == 13   || // spacebar & return key(s) (if you want to allow carriage returns)
+    (keycode > 64 && keycode < 91)   || // letter keys
+    (keycode > 95 && keycode < 112)  || // numpad keys
+    (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
+    (keycode > 218 && keycode < 223);   // [\]' (in order)
   };
 
   MaterialSelectfield.prototype.hide_ = function() {
@@ -364,7 +365,15 @@
       this.makeElements_();
 
       this.boundClickHandler = this.onclick_.bind(this);
+      this.boundFocusHandler = this.onFocus_.bind(this);
+      this.boundBlurHandler = this.onBlur_.bind(this);
+
+      var selectedBox = this.element_.querySelector('.' + this.CssClasses_.SELECTED_BOX_VALUE);
+      selectedBox.addEventListener('focus', this.boundFocusHandler, true);
+      selectedBox.addEventListener('blur', this.boundBlurHandler, true);
+
       this.element_.addEventListener('click', this.boundClickHandler);
+
       if (invalid) {
         this.element_.classList.add(this.CssClasses_.IS_INVALID);
       }
@@ -394,18 +403,18 @@
 
       if (this.options_.length) {
         var listOptionBox = document.createElement('div')
-          ,ul = '<ul tabindex="-1">'
-          ,liHTML = ''
-          ;
+        ,ul = '<ul tabindex="-1">'
+        ,liHTML = ''
+        ;
 
         listOptionBox.classList.add(this.CssClasses_.LIST_OPTION_BOX);
         listOptionBox.tabIndex = '-1';
 
         for (var i = 0; i < this.options_.length; i++) {
           var item = this.options_[i]
-            ,itemText = (item.textContent || '').toUpperCase().replace(/( )|(\n)/g, "")
-            ,liClass = ''
-            ;
+          ,itemText = (item.textContent || '').toUpperCase().replace(/( )|(\n)/g, "")
+          ,liClass = ''
+          ;
 
           this.optionsMap_[itemText] = i;
           this.optionsArr_.push(itemText);
@@ -453,15 +462,15 @@
   };
 
   /**
-   * Public alias for the downgrade method.
-   *
-   * @public
-   */
+  * Public alias for the downgrade method.
+  *
+  * @public
+  */
   MaterialSelectfield.prototype.mdlDowngrade =
-    MaterialSelectfield.prototype.mdlDowngrade_;
+  MaterialSelectfield.prototype.mdlDowngrade_;
 
   MaterialSelectfield.prototype['mdlDowngrade'] =
-    MaterialSelectfield.prototype.mdlDowngrade;
+  MaterialSelectfield.prototype.mdlDowngrade;
 
   componentHandler.register({
     constructor: MaterialSelectfield,
