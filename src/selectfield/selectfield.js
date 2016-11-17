@@ -375,8 +375,8 @@
       this.makeElements_();
 
       this.boundClickHandler = this.onclick_.bind(this);
-      this.boundFocusHandler = this.onFocus_.bind(this);
-      this.boundBlurHandler = this.onBlur_.bind(this);
+      // this.boundFocusHandler = this.onFocus_.bind(this);
+      // this.boundBlurHandler = this.onBlur_.bind(this);
 
       var selectedBox = this.element_.querySelector('.' + this.CssClasses_.SELECTED_BOX_VALUE);
       selectedBox.addEventListener('focus', this.boundFocusHandler, true);
