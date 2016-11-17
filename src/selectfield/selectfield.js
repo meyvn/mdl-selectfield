@@ -40,20 +40,30 @@
     this.observer_ = null;
   };
 
+
   MaterialSelectfield.prototype.onFocus_ = function (event) {
-    this.closing_ && this.show_(event);
+    setTimeout((function () {
+      if (!this.element_.classList.contains(this.CssClasses_.IS_FOCUSED)) {
+        this.show_(event);
+      }
+    }).bind(this), 300);
   };
 
   MaterialSelectfield.prototype.onBlur_ = function (event) {
-    this.closing_ = true;
+    // if (event != undefined) {
+    //   if (event.target && event.target.nodeName == "LI") {
+    //     this.onSelected_(event);
+    //   }
+    // }
     this.hide_();
   };
 
   MaterialSelectfield.prototype.onSelected_ = function (event) {
-    if(event.target && event.target.nodeName == "LI") {
+    if (event.target && event.target.nodeName == "LI") {
+
       var option = this.options_[event.target.getAttribute('data-value')];
 
-      if(option.disabled) {
+      if (option.disabled) {
         event.stopPropagation();
         return false;
       }
@@ -63,19 +73,19 @@
 
       //fire event change
       var evt;
-      if(typeof window.Event == "function") {
+      if (typeof window.Event == "function") {
         evt = new Event('change', {
           bubbles: true
-          ,cancelable: true
+          , cancelable: true
         });
       }
-      else if(typeof document.createEvent == "function") {
+      else if (typeof document.createEvent == "function") {
         evt = document.createEvent("HTMLEvents");
         evt.initEvent("change", true, true);
       }
       evt && this.select_.dispatchEvent(evt);
 
-      if(option.textContent !== "") {
+      if (option.textContent !== "") {
         this.element_.classList.add(this.CssClasses_.IS_DIRTY);
         var selectedItem = this.listOptionBox_.querySelector('.' + this.CssClasses_.IS_SELECTED);
         selectedItem && selectedItem.classList.remove(this.CssClasses_.IS_SELECTED);
@@ -96,7 +106,7 @@
   MaterialSelectfield.prototype.update_ = function () {
     var itemSelected;
 
-    if(this.options_ && this.options_.length > 0) {
+    if (this.options_ && this.options_.length > 0) {
       for (var i = 0; i < this.options_.length; i++) {
         var item = this.options_[i];
         if (item.selected && item.value !== "") {
@@ -108,7 +118,7 @@
       }
     }
 
-    if(!itemSelected) {
+    if (!itemSelected) {
       this.element_.classList.remove(this.CssClasses_.IS_DIRTY);
     }
 
@@ -116,7 +126,7 @@
     this.checkValidity();
   };
 
-  MaterialSelectfield.prototype.checkValidity = function() {
+  MaterialSelectfield.prototype.checkValidity = function () {
     if (this.select_.validity) {
       if (this.select_.validity.valid) {
         this.element_.classList.remove(this.CssClasses_.IS_INVALID);
@@ -126,9 +136,9 @@
     }
   };
   MaterialSelectfield.prototype['checkValidity'] =
-  MaterialSelectfield.prototype.checkValidity;
+    MaterialSelectfield.prototype.checkValidity;
 
-  MaterialSelectfield.prototype.checkDisabled = function() {
+  MaterialSelectfield.prototype.checkDisabled = function () {
     if (this.select_.disabled) {
       this.element_.classList.add(this.CssClasses_.IS_DISABLED);
     } else {
@@ -136,14 +146,14 @@
     }
   };
   MaterialSelectfield.prototype['checkDisabled'] =
-  MaterialSelectfield.prototype.checkDisabled;
+    MaterialSelectfield.prototype.checkDisabled;
 
   /**
   * Disable select field.
   *
   * @public
   */
-  MaterialSelectfield.prototype.disable = function() {
+  MaterialSelectfield.prototype.disable = function () {
     this.select_.disabled = true;
     this.update_();
   };
@@ -154,7 +164,7 @@
   *
   * @public
   */
-  MaterialSelectfield.prototype.enable = function() {
+  MaterialSelectfield.prototype.enable = function () {
     this.select_.disabled = false;
     this.update_();
   };
@@ -172,10 +182,10 @@
   };
 
   MaterialSelectfield.prototype.toggle = function (event) {
-    if(!this.element_.classList.contains(this.CssClasses_.IS_FOCUSED)) {
+    if (!this.element_.classList.contains(this.CssClasses_.IS_FOCUSED)) {
       this.show_(event)
     }
-    else if(event.target && event.target.nodeName == "LI" && this.isDescendant_(this.listOptionBox_, event.target)) {
+    else if (event.target && event.target.nodeName == "LI" && this.isDescendant_(this.listOptionBox_, event.target)) {
       this.onSelected_(event)
     }
     else {
@@ -183,20 +193,20 @@
     }
   };
 
-  MaterialSelectfield.prototype.show_ = function(event) {
+  MaterialSelectfield.prototype.show_ = function (event) {
     this.checkDisabled();
-    if(this.element_.classList.contains(this.CssClasses_.IS_DISABLED)) return;
+    if (this.element_.classList.contains(this.CssClasses_.IS_DISABLED)) return;
 
     this.element_.classList.add(this.CssClasses_.IS_FOCUSED);
     this.closing_ = false;
     this.strSearch_ = "";
 
     var selectedItem = this.listOptionBox_ && this.listOptionBox_.querySelector('.' + this.CssClasses_.IS_SELECTED);
-    if(selectedItem) selectedItem.parentElement.parentElement.scrollTop = selectedItem.offsetTop;
+    if (selectedItem) selectedItem.parentElement.parentElement.scrollTop = selectedItem.offsetTop;
 
     this.boundKeyDownHandler_ = this.onKeyDown_.bind(this);
-    this.boundClickDocHandler_ = function(e) {
-      if (e !== event && !this.closing_ && !(e.target.parentNode === this.element_ || e.target.parentNode === this.selectedOption_) ) {
+    this.boundClickDocHandler_ = function (e) {
+      if (e !== event && !this.closing_ && !(e.target.parentNode === this.element_ || e.target.parentNode === this.selectedOption_)) {
         this.hide_();
       }
     }.bind(this);
@@ -205,15 +215,15 @@
     document.addEventListener('click', this.boundClickDocHandler_);
   };
 
-  MaterialSelectfield.prototype.onKeyDown_ = function(evt) {
+  MaterialSelectfield.prototype.onKeyDown_ = function (evt) {
     var items = this.listOptionBox_.querySelectorAll('li:not([disabled])');
 
     if (items && items.length > 0 && !this.closing_) {
       var currentIndex = Array.prototype.slice.call(items).indexOf(this.listOptionBox_.querySelectorAll('.' + this.CssClasses_.IS_SELECTED)[0]);
       var selectedItem;
 
-      if(evt.keyCode === this.Keycodes_.UP_ARROW || evt.keyCode === this.Keycodes_.DOWN_ARROW) {
-        if(currentIndex != -1) {
+      if (evt.keyCode === this.Keycodes_.UP_ARROW || evt.keyCode === this.Keycodes_.DOWN_ARROW) {
+        if (currentIndex != -1) {
           items[currentIndex].classList.remove(this.CssClasses_.IS_SELECTED);
         }
 
@@ -233,7 +243,7 @@
           }
         }
 
-        if(selectedItem) {
+        if (selectedItem) {
           selectedItem.classList.add(this.CssClasses_.IS_SELECTED);
           this.listOptionBox_.scrollTop = selectedItem.offsetTop;
           this.lastSelectedItem_ = selectedItem;
@@ -244,15 +254,15 @@
         // Send mousedown and mouseup to trigger ripple.
         var ev;
 
-        if(document.createEvent) {
+        if (document.createEvent) {
           ev = document.createEvent("MouseEvent");
-          ev.initMouseEvent("click",true,true,window,0,0,0,0,0,false,false,false,false,0,null);
+          ev.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
         }
         else {
           ev = new MouseEvent("mousedown");
         }
         this.lastSelectedItem_.dispatchEvent(ev);
-        if(!document.createEvent) {
+        if (!document.createEvent) {
           ev = new MouseEvent('mouseup');
           this.lastSelectedItem_.dispatchEvent(ev);
         }
@@ -263,15 +273,15 @@
         evt.preventDefault();
         var ev;
 
-        if(document.createEvent) {
+        if (document.createEvent) {
           ev = document.createEvent("MouseEvent");
-          ev.initMouseEvent("click",true,true,window,0,0,0,0,0,false,false,false,false,0,null);
+          ev.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
         }
         else {
           ev = new MouseEvent("mousedown");
         }
         document.body.dispatchEvent(ev);
-        if(!document.createEvent) {
+        if (!document.createEvent) {
           ev = new MouseEvent('mouseup');
           document.body.dispatchEvent(ev);
         }
@@ -282,9 +292,9 @@
 
         this.strSearch_ += String.fromCharCode(charCode);
 
-        if(this.keyDownTimerId_) clearTimeout(this.keyDownTimerId_);
+        if (this.keyDownTimerId_) clearTimeout(this.keyDownTimerId_);
 
-        this.keyDownTimerId_ = setTimeout((function() {
+        this.keyDownTimerId_ = setTimeout((function () {
           this.keyDownTimerId_ = null;
           this.strSearch_ = "";
         }).bind(this), 300);
@@ -292,7 +302,7 @@
         var ind = this.searchByStrIndex_(0);
 
         if (ind > -1) {
-          if(currentIndex != -1) {
+          if (currentIndex != -1) {
             items[currentIndex].classList.remove(this.CssClasses_.IS_SELECTED);
           }
           selectedItem = items[ind];
@@ -304,14 +314,14 @@
     }
   };
 
-  MaterialSelectfield.prototype.searchByStrIndex_ = function(key) {
+  MaterialSelectfield.prototype.searchByStrIndex_ = function (key) {
     var srchStr = this.strSearch_;
-    var isPresent = new RegExp('^' + srchStr +'.');
+    var isPresent = new RegExp('^' + srchStr + '.');
     var indx = -1;
     var arr = this.optionsArr_;
 
-    for(var i = 0; i < arr.length; i++) {
-      if(isPresent.test(arr[i])) {
+    for (var i = 0; i < arr.length; i++) {
+      if (isPresent.test(arr[i])) {
         indx = i;
         break;
       }
@@ -320,16 +330,16 @@
     return indx != -1 ? this.optionsMap_[this.optionsArr_[indx]] : -1;
   };
 
-  MaterialSelectfield.prototype.validKeyCode_ = function(keycode) {
-    return (keycode > 47 && keycode < 58)   || // number keys
-    keycode == 32 || keycode == 13   || // spacebar & return key(s) (if you want to allow carriage returns)
-    (keycode > 64 && keycode < 91)   || // letter keys
-    (keycode > 95 && keycode < 112)  || // numpad keys
-    (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
-    (keycode > 218 && keycode < 223);   // [\]' (in order)
+  MaterialSelectfield.prototype.validKeyCode_ = function (keycode) {
+    return (keycode > 47 && keycode < 58) || // number keys
+      keycode == 32 || keycode == 13 || // spacebar & return key(s) (if you want to allow carriage returns)
+      (keycode > 64 && keycode < 91) || // letter keys
+      (keycode > 95 && keycode < 112) || // numpad keys
+      (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
+      (keycode > 218 && keycode < 223);   // [\]' (in order)
   };
 
-  MaterialSelectfield.prototype.hide_ = function() {
+  MaterialSelectfield.prototype.hide_ = function () {
     this.element_.classList.remove(this.CssClasses_.IS_FOCUSED);
     this.closing_ = true;
     this.strSearch_ = "";
@@ -370,9 +380,9 @@
 
       var selectedBox = this.element_.querySelector('.' + this.CssClasses_.SELECTED_BOX_VALUE);
       selectedBox.addEventListener('focus', this.boundFocusHandler, true);
-      selectedBox.addEventListener('blur', this.boundBlurHandler, true);
-
       this.element_.addEventListener('click', this.boundClickHandler);
+      // selectedBox.addEventListener('blur', this.boundBlurHandler, true);
+
 
       if (invalid) {
         this.element_.classList.add(this.CssClasses_.IS_INVALID);
@@ -397,39 +407,39 @@
       this.options_ = this.select_.querySelectorAll('option');
       this.select_.style.visibility = "hidden";
 
-      if(this.options_.length == 0) {
+      if (this.options_.length == 0) {
         this.options_ = [document.createElement('option')]
       }
 
       if (this.options_.length) {
         var listOptionBox = document.createElement('div')
-        ,ul = '<ul tabindex="-1">'
-        ,liHTML = ''
-        ;
+          , ul = '<ul tabindex="-1">'
+          , liHTML = ''
+          ;
 
         listOptionBox.classList.add(this.CssClasses_.LIST_OPTION_BOX);
         listOptionBox.tabIndex = '-1';
 
         for (var i = 0; i < this.options_.length; i++) {
           var item = this.options_[i]
-          ,itemText = (item.textContent || '').toUpperCase().replace(/( )|(\n)/g, "")
-          ,liClass = ''
-          ;
+            , itemText = (item.textContent || '').toUpperCase().replace(/( )|(\n)/g, "")
+            , liClass = ''
+            ;
 
           this.optionsMap_[itemText] = i;
           this.optionsArr_.push(itemText);
 
-          if(item.selected && item.textContent !== "") {
+          if (item.selected && item.textContent !== "") {
             this.element_.classList.add(this.CssClasses_.IS_DIRTY);
             this.selectedOptionValue_.textContent = item.textContent;
             liClass += this.CssClasses_.IS_SELECTED;
           }
 
-          if(item.disabled) {
+          if (item.disabled) {
             liClass += liClass != '' ? ' ' + this.CssClasses_.IS_DISABLED : this.CssClasses_.IS_DISABLED
           }
 
-          liHTML += '<li class="' + liClass + '" data-value="'+ i +'" tabindex="-1">' + item.textContent + '</li>';
+          liHTML += '<li class="' + liClass + '" data-value="' + i + '" tabindex="-1">' + item.textContent + '</li>';
         }
 
         ul += liHTML + '</ul>';
@@ -438,7 +448,7 @@
         this.element_.appendChild(listOptionBox);
         this.listOptionBox_ = listOptionBox;
 
-        if(window.MutationObserver) {
+        if (window.MutationObserver) {
           this.observer_ = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
               if (mutation.type == 'childList') {
@@ -446,13 +456,13 @@
               }
             }.bind(this));
           }.bind(this));
-          this.observer_.observe(this.select_, {attributes: true, childList: true, characterData: true})
+          this.observer_.observe(this.select_, { attributes: true, childList: true, characterData: true })
         }
       }
     }
   };
 
-  MaterialSelectfield.prototype.mdlDowngrade_ = function() {
+  MaterialSelectfield.prototype.mdlDowngrade_ = function () {
     this.element_.removeEventListener('click', this.boundClickHandler);
     this.listOptionBox_ && this.element_.removeChild(this.listOptionBox_);
     this.selectedOption_ && this.element_.removeChild(this.selectedOption_);
@@ -467,10 +477,10 @@
   * @public
   */
   MaterialSelectfield.prototype.mdlDowngrade =
-  MaterialSelectfield.prototype.mdlDowngrade_;
+    MaterialSelectfield.prototype.mdlDowngrade_;
 
   MaterialSelectfield.prototype['mdlDowngrade'] =
-  MaterialSelectfield.prototype.mdlDowngrade;
+    MaterialSelectfield.prototype.mdlDowngrade;
 
   componentHandler.register({
     constructor: MaterialSelectfield,
