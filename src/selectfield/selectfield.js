@@ -45,7 +45,7 @@
   };
 
   MaterialSelectfield.prototype.onBlur_ = function (event) {
-    this.element_.classList.remove(this.CssClasses_.IS_FOCUSED);
+    !this.closing_ && this.hide_();
   };
 
   MaterialSelectfield.prototype.onSelected_ = function (event) {    
@@ -88,7 +88,7 @@
     }
   };
 
-  MaterialSelectfield.prototype.onclick_ = function (event) {
+  MaterialSelectfield.prototype.onClick_ = function (event) {
     this.toggle(event);
   };
 
@@ -354,7 +354,7 @@
       selectedOption.appendChild(icon);
       var value = document.createElement('span');
       value.classList.add(this.CssClasses_.SELECTED_BOX_VALUE);
-      value.tabIndex = 0;
+      value.tabIndex = -1;
       selectedOption.appendChild(value);
       this.selectedOptionValue_ = value;
       this.element_.appendChild(this.selectedOption_);
@@ -363,8 +363,12 @@
 
       this.makeElements_();
 
-      this.boundClickHandler = this.onclick_.bind(this);
+      this.boundClickHandler = this.onClick_.bind(this);
+      this.boundFocusHandler = this.onFocus_.bind(this);
+      this.boundBlurHandler = this.onBlur_.bind(this);
       this.element_.addEventListener('click', this.boundClickHandler);
+      this.select_.addEventListener('focus', this.boundFocusHandler);
+      this.select_.addEventListener('blur', this.boundBlurHandler);
       if (invalid) {
         this.element_.classList.add(this.CssClasses_.IS_INVALID);
       }
@@ -376,7 +380,6 @@
     this.mdlDowngrade_();
     this.setDefaults_();
     this.init();
-    //this.makeElements_();
   };
 
   MaterialSelectfield.prototype.clearElements_ = function () {
@@ -386,7 +389,8 @@
   MaterialSelectfield.prototype.makeElements_ = function () {
     if (this.select_) {
       this.options_ = this.select_.querySelectorAll('option');
-      this.select_.style.visibility = "hidden";
+      this.select_.style.opacity = "0";
+      this.select_.style.zIndex = "-1";
 
       if(this.options_.length == 0) {
         this.options_ = [document.createElement('option')]
@@ -445,10 +449,13 @@
 
   MaterialSelectfield.prototype.mdlDowngrade_ = function() {
     this.element_.removeEventListener('click', this.boundClickHandler);
+    this.select_.removeEventListener('focus', this.boundFocusHandler);
+    this.select_.removeEventListener('blur', this.boundBlurHandler);
     this.listOptionBox_ && this.element_.removeChild(this.listOptionBox_);
     this.selectedOption_ && this.element_.removeChild(this.selectedOption_);
     this.element_.removeAttribute('data-upgraded');
-    this.select_.style.visibility = "visible";
+    this.select_.style.opacity = "1";
+    this.select_.style.zIndex = "inherit";
     this.observer_ && this.observer_.disconnect();
   };
 

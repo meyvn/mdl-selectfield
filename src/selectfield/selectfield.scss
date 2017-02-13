@@ -12,6 +12,7 @@
   line-height: 20px;
   font-size: 16px;
   padding: $input-text-vertical-spacing 0;
+  z-index: inherit;
 }
 
 .mdl-selectfield__select {
@@ -38,7 +39,8 @@
   white-space: nowrap;
   text-align: left;
 
-  .mdl-selectfield.is-dirty & {
+  .mdl-selectfield.is-dirty &,
+  .mdl-selectfield.is-focused &{
     visibility: hidden;
   }
 
@@ -75,6 +77,11 @@
   .mdl-selectfield.is-invalid & {
     visibility: visible;
   }
+
+  .mdl-selectfield.is-focused &,
+  .mdl-selectfield--floating-label.is-focused & {
+    visibility: hidden;
+  }
 }
 
 .mdl-selectfield__box {
@@ -83,7 +90,6 @@
   right: 0; bottom: ($input-text-vertical-spacing - 1);
   border-bottom: 1px solid $input-text-bottom-border-color;
   outline: none;
-  z-index: 100;
   overflow: hidden;
   cursor: pointer;
 
@@ -98,10 +104,13 @@
     outline: none;
     user-select: none;
     cursor: default;
-    z-index: 99;
 
     .mdl-selectfield.is-invalid & {
       color: $input-text-error-color;
+    }
+
+    .mdl-selectfield.is-focused & {
+      visibility: hidden;
     }
   }
 
@@ -112,7 +121,6 @@
     font-size: 16px;
     user-select: none;
     cursor: default;
-    z-index: 99;
     outline: none;
     white-space: nowrap;
     width: 92%;
@@ -121,6 +129,7 @@
 
   .mdl-selectfield.is-focused & {
     outline: none;
+    visibility: hidden;
   }
 
   .mdl-selectfield.is-invalid & {
