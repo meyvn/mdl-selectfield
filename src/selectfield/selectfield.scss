@@ -93,20 +93,33 @@
   overflow: hidden;
   cursor: pointer;
 
-  & > i {
-    color: $input-text-label-color;
+  & > .mdl-selectfield__arrow-down__container {
     position: absolute;
     top: 50%;
-    margin-top: ($input-text-vertical-spacing/2 + $input-text-padding)*-1;
+    margin-top: -4px;
     right: 0;
-    line-height: 24px;
-    width: 24px;
+    height: 5px;
+    width: 10px;
     outline: none;
     user-select: none;
     cursor: default;
+    padding-left: 7px;
+    padding-right: 7px;
+
+    .mdl-selectfield__arrow-down {
+      display: block;
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+
+      border-top: 5px solid $input-text-label-color;
+    }
 
     .mdl-selectfield.is-invalid & {
-      color: $input-text-error-color;
+      .mdl-selectfield__arrow-down {
+        border-top-color: $input-text-error-color;
+      }
     }
 
     .mdl-selectfield.is-focused & {
