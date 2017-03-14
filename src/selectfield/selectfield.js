@@ -347,13 +347,6 @@
       selectedOption.classList.add(this.CssClasses_.SELECTED_BOX);
       selectedOption.tabIndex = 1;
       this.selectedOption_ = selectedOption;
-
-      // var icon = document.createElement('i');
-      // icon.classList.add('material-icons');
-      // icon.tabIndex = -1;
-      // icon.textContent = 'arrow_drop_down';
-      // selectedOption.appendChild(icon);
-
       var iconContainer = document.createElement('span');
       iconContainer.tabIndex = -1;
       iconContainer.classList.add('mdl-selectfield__arrow-down__container');
