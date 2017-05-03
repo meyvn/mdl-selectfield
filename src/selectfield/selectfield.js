@@ -49,7 +49,7 @@
   };
 
   MaterialSelectfield.prototype.onSelected_ = function (event) {    
-    if(event.target && event.target.nodeName == "LI") {
+    if(event.target && event.target.nodeName === 'LI') {
       var option = this.options_[event.target.getAttribute('data-value')];
 
       if(option.disabled) {
@@ -62,19 +62,19 @@
 
       //fire event change
       var evt;
-      if(typeof window.Event == "function") {
+      if(typeof window.Event === 'function') {
         evt = new Event('change', {
           bubbles: true
           ,cancelable: true
         });
       }
-      else if(typeof document.createEvent == "function") {
-        evt = document.createEvent("HTMLEvents");
-        evt.initEvent("change", true, true);
+      else if(typeof document.createEvent === 'function') {
+        evt = document.createEvent('HTMLEvents');
+        evt.initEvent('change', true, true);
       }
       evt && this.select_.dispatchEvent(evt);
 
-      if(option.textContent !== "") {
+      if(option.textContent !== '') {
         this.element_.classList.add(this.CssClasses_.IS_DIRTY);
         var selectedItem = this.listOptionBox_.querySelector('.' + this.CssClasses_.IS_SELECTED);
         selectedItem && selectedItem.classList.remove(this.CssClasses_.IS_SELECTED);
@@ -161,8 +161,8 @@
 
   MaterialSelectfield.prototype.isDescendant_ = function (parent, child) {
     var node = child.parentNode;
-    while (node != null) {
-      if (node == parent) {
+    while (node !== null) {
+      if (node === parent) {
         return true;
       }
       node = node.parentNode;
@@ -174,7 +174,7 @@
     if(!this.element_.classList.contains(this.CssClasses_.IS_FOCUSED)) {
       this.show_(event)
     }
-    else if(event.target && event.target.nodeName == "LI" && this.isDescendant_(this.listOptionBox_, event.target)) {
+    else if(event.target && event.target.nodeName === 'LI' && this.isDescendant_(this.listOptionBox_, event.target)) {
       this.onSelected_(event)
     }
     else {
@@ -212,7 +212,7 @@
       var selectedItem;
 
       if(evt.keyCode === this.Keycodes_.UP_ARROW || evt.keyCode === this.Keycodes_.DOWN_ARROW) {
-        if(currentIndex != -1) {
+        if(currentIndex !== -1) {
           items[currentIndex].classList.remove(this.CssClasses_.IS_SELECTED);
         }
 
@@ -291,7 +291,7 @@
         var ind = this.searchByStrIndex_(0);
 
         if (ind > -1) {
-          if(currentIndex != -1) {
+          if(currentIndex !== -1) {
             items[currentIndex].classList.remove(this.CssClasses_.IS_SELECTED);
           }
           selectedItem = items[ind];
@@ -321,7 +321,7 @@
 
   MaterialSelectfield.prototype.validKeyCode_ = function(keycode) {
     return (keycode > 47 && keycode < 58)   || // number keys
-      keycode == 32 || keycode == 13   || // spacebar & return key(s) (if you want to allow carriage returns)
+      keycode === 32 || keycode === 13   || // spacebar & return key(s) (if you want to allow carriage returns)
       (keycode > 64 && keycode < 91)   || // letter keys
       (keycode > 95 && keycode < 112)  || // numpad keys
       (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
@@ -347,11 +347,14 @@
       selectedOption.classList.add(this.CssClasses_.SELECTED_BOX);
       selectedOption.tabIndex = 1;
       this.selectedOption_ = selectedOption;
-      var icon = document.createElement('i');
-      icon.classList.add('material-icons');
+      var iconContainer = document.createElement('span');
+      iconContainer.tabIndex = -1;
+      iconContainer.classList.add('mdl-selectfield__arrow-down__container');
+      var icon = document.createElement('span');
+      icon.classList.add('mdl-selectfield__arrow-down');
       icon.tabIndex = -1;
-      icon.textContent = 'arrow_drop_down';
-      selectedOption.appendChild(icon);
+      iconContainer.appendChild(icon);
+      selectedOption.appendChild(iconContainer);
       var value = document.createElement('span');
       value.classList.add(this.CssClasses_.SELECTED_BOX_VALUE);
       value.tabIndex = -1;
@@ -392,7 +395,7 @@
       this.select_.style.opacity = "0";
       this.select_.style.zIndex = "-1";
 
-      if(this.options_.length == 0) {
+      if(this.options_.length === 0) {
         this.options_ = [document.createElement('option')]
       }
 
@@ -421,7 +424,7 @@
           }
 
           if(item.disabled) {
-            liClass += liClass != '' ? ' ' + this.CssClasses_.IS_DISABLED : this.CssClasses_.IS_DISABLED
+            liClass += liClass !== '' ? ' ' + this.CssClasses_.IS_DISABLED : this.CssClasses_.IS_DISABLED
           }
 
           liHTML += '<li class="' + liClass + '" data-value="'+ i +'" tabindex="-1">' + item.textContent + '</li>';
@@ -436,7 +439,7 @@
         if(window.MutationObserver) {
           this.observer_ = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
-              if (mutation.type == 'childList') {
+              if (mutation.type === 'childList') {
                 this.refreshOptions()
               }
             }.bind(this));
