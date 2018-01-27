@@ -48,6 +48,21 @@
     !this.closing_ && this.hide_();
   };
 
+  MaterialSelectfield.prototype.fireEventChange_ = function () {
+    var evt;
+
+    if (typeof window.Event === 'function') {
+      evt = new Event('change', {
+        bubbles: true
+        ,cancelable: true
+      });
+    } else if (typeof document.createEvent === 'function') {
+      evt = document.createEvent('HTMLEvents');
+      evt.initEvent('change', true, true);
+    }
+    evt && this.select_.dispatchEvent(evt);
+  };
+
   MaterialSelectfield.prototype.onSelected_ = function (event) {    
     if(event.target && event.target.nodeName === 'LI') {
       var option = this.options_[event.target.getAttribute('data-value')];
@@ -61,18 +76,7 @@
       option.selected = true;
 
       //fire event change
-      var evt;
-      if(typeof window.Event === 'function') {
-        evt = new Event('change', {
-          bubbles: true
-          ,cancelable: true
-        });
-      }
-      else if(typeof document.createEvent === 'function') {
-        evt = document.createEvent('HTMLEvents');
-        evt.initEvent('change', true, true);
-      }
-      evt && this.select_.dispatchEvent(evt);
+      this.fireEventChange_();
 
       if(option.textContent !== '') {
         this.element_.classList.add(this.CssClasses_.IS_DIRTY);
@@ -93,13 +97,13 @@
   };
 
   MaterialSelectfield.prototype.update_ = function () {
-    var itemSelected;
+    var itemSelected = false;
 
     if(this.options_ && this.options_.length > 0) {
       for (var i = 0; i < this.options_.length; i++) {
         var item = this.options_[i];
         if (item.selected && item.value !== "") {
-          var itemSelected = true;
+          itemSelected = true;
           this.element_.classList.add(this.CssClasses_.IS_DIRTY);
           this.listOptionBox_.querySelector('.' + this.CssClasses_.IS_SELECTED).classList.remove(this.CssClasses_.IS_SELECTED);
           this.listOptionBox_.querySelectorAll('LI')[i].classList.add(this.CssClasses_.IS_SELECTED);
@@ -472,6 +476,38 @@
 
   MaterialSelectfield.prototype['mdlDowngrade'] =
     MaterialSelectfield.prototype.mdlDowngrade;
+
+  MaterialSelectfield.prototype.change_ = function (value) {
+    var option = null;
+
+    for (var i = 0; i < this.options_.length; i++) {
+      if (this.options_[i].value === value) {
+        option = this.options_[i];
+        break;
+      }
+    }
+
+    if (option === null) return;
+
+    this.selectedOptionValue_.textContent = option.textContent;
+    option.selected = true;
+
+    this.update_();
+    this.fireEventChange_();
+  };
+
+  /**
+   * Update the selected option.
+   *
+   * @param {string} value The value of the option which is selected.
+   * @public
+   */
+  MaterialSelectfield.prototype.change =
+    MaterialSelectfield.prototype.change_;
+
+  MaterialSelectfield.prototype['change'] =
+    MaterialSelectfield.prototype.change;
+
 
   componentHandler.register({
     constructor: MaterialSelectfield,
