@@ -38,6 +38,7 @@
     this.closing_ = true;
     this.keyDownTimerId_ = null;
     this.observer_ = null;
+	this.prev_isOutOfViewport = null;
   };
 
   MaterialSelectfield.prototype.onFocus_ = function (event) {
@@ -117,6 +118,7 @@
 
     this.checkDisabled();
     this.checkValidity();
+    
   };
 
   MaterialSelectfield.prototype.checkValidity = function() {
@@ -206,6 +208,9 @@
 
     document.addEventListener('keydown', this.boundKeyDownHandler_);
     document.addEventListener('click', this.boundClickDocHandler_);
+    
+    this.moveFromBoundary();
+    
   };
 
   MaterialSelectfield.prototype.onKeyDown_ = function(evt) {
@@ -339,6 +344,8 @@
     this.boundClickDocHandler_ && document.removeEventListener('click', this.boundClickDocHandler_);
     this.boundKeyDownHandler_ && document.removeEventListener('keydown', this.boundKeyDownHandler_);
     this.update_();
+	// now reset element position back to its default position
+	this.moveFromBoundary();
   };
 
   MaterialSelectfield.prototype.init = function () {
@@ -439,6 +446,8 @@
         listOptionBox.innerHTML = ul;
         this.element_.appendChild(listOptionBox);
         this.listOptionBox_ = listOptionBox;
+        
+        var isOutOfViewport = this.isOutOfViewport(this.listOptionBox_);
 
         if(window.MutationObserver) {
           this.observer_ = new MutationObserver(function (mutations) {
@@ -494,6 +503,109 @@
 
     this.update_();
     this.fireEventChange_();
+  };
+  
+  /**
+  * Allow element full visibility, if intersecting viewport boundary.
+  *
+  * (c) 2019 Charles Robertson, Open Source license
+  * @return void 
+  */
+  
+  MaterialSelectfield.prototype.moveFromBoundary = function () {
+	  
+	var debug = false;  
+	var offset = 30;
+	
+	var isOutOfViewport = this.isOutOfViewport(this.listOptionBox_);
+	if(debug){
+	  console.log("moveFromBoundary(): isOutOfViewport: ",isOutOfViewport);
+	}
+	var rect = this.listOptionBox_.getBoundingClientRect();
+	if(debug){
+	  console.log("moveFromBoundary(): rect: ",rect);
+	}
+	var moveDistance = rect.height;
+	if(debug){
+	  console.log("moveFromBoundary(): moveDistance: ",moveDistance);
+	}
+	var scrollTop = this.listOptionBox_.offsetTop;
+	if(debug){
+	  console.log("moveFromBoundary(): scrollTop: ",scrollTop);
+	}
+	if(!isNaN(moveDistance)){
+		
+	  if('bottom' in isOutOfViewport){
+		if(isOutOfViewport['bottom']){
+		  var top = parseInt(scrollTop - moveDistance); 
+		  if(debug){
+			console.log("moveFromBoundary(): top 1: ",top);
+		  }
+		  this.listOptionBox_.style.top = (top - offset) + "px";
+		}
+		else{
+		  if(this.prev_isOutOfViewport && 'bottom' in this.prev_isOutOfViewport){
+			if(this.prev_isOutOfViewport['bottom']){
+			  var top = parseInt(scrollTop + moveDistance); 
+			  if(debug){
+				console.log("moveFromBoundary(): top 2: ",top);
+			  }
+			  this.listOptionBox_.style.top = (top + offset) + "px";
+			}
+		  }
+		}
+	  }
+	  
+	  if('top' in isOutOfViewport){
+		if(isOutOfViewport['top']){
+		  var top = parseInt(scrollTop + moveDistance); 
+		  if(debug){
+			console.log("moveFromBoundary(): top 1: ",top);
+		  }
+		  this.listOptionBox_.style.top = (top + offset) + "px";
+		}
+		else{
+		  if(this.prev_isOutOfViewport && 'top' in this.prev_isOutOfViewport){
+			if(this.prev_isOutOfViewport['top']){
+			  var top = parseInt(scrollTop - moveDistance); 
+			  if(debug){
+				console.log("moveFromBoundary(): top 2: ",top);
+			  }
+			  this.listOptionBox_.style.top = (top - offset) + "px";
+			}
+		  }
+		}
+	  }
+	  
+	}
+	
+	this.prev_isOutOfViewport = isOutOfViewport;
+	if(debug){
+	  console.log("moveFromBoundary(): this.prev_isOutOfViewport: ",this.prev_isOutOfViewport);
+	}
+	
+  }
+
+ /**
+ * Check if an element is out of the viewport.
+ *
+ * (c) 2018 Chris Ferdinandi, MIT License, https://gomakethings.com
+ * @param  {Node} elem The element to check
+ * @return {Object} a set of booleans for each side of the element
+ */
+ 
+  MaterialSelectfield.prototype.isOutOfViewport = function (elem) {
+	// Get element's bounding
+	var bounding = elem.getBoundingClientRect();
+	// Check if it's out of the viewport on each side
+	var out = {};
+	out.top = bounding.top < 0;
+	out.left = bounding.left < 0;
+	out.bottom = bounding.bottom > (window.innerHeight || document.documentElement.clientHeight);
+	out.right = bounding.right > (window.innerWidth || document.documentElement.clientWidth);
+	out.any = out.top || out.left || out.bottom || out.right;
+	out.all = out.top && out.left && out.bottom && out.right;
+	return out;
   };
 
   /**
