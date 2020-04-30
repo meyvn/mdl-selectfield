@@ -3,7 +3,7 @@ Material Design Lite selectfield component (https://github.com/google/material-d
 
 ## Live Example
 
-Check out the [jsfiddle](http://jsfiddle.net/zetta/mofbbamo/)
+Check out the [jsfiddle](http://jsfiddle.net/zetta/mofbbamo/embedded/result/)
 
 ## Basic use
 To use any MDL component, you must include the minified CSS and JavaScript files using standard relative-path references 
