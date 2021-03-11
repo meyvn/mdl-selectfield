@@ -442,7 +442,9 @@
 			if(item.disabled){
 			  liClass += liClass !== '' ? ' ' + this.CssClasses_.IS_DISABLED : this.CssClasses_.IS_DISABLED;
 			}
-			liClass += liClass !== '' ? ' ' + this.CssClasses_.IS_OPTION : this.CssClasses_.IS_OPTION;
+			if(item.parentNode.tagName.toLowerCase() == "optgroup"){
+			  liClass += liClass !== '' ? ' ' + this.CssClasses_.IS_OPTION : this.CssClasses_.IS_OPTION;
+			}
 		  }
 		  else{
 			liClass += liClass !== '' ? ' ' + this.CssClasses_.IS_DISABLED : this.CssClasses_.IS_DISABLED;
