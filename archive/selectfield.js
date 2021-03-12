@@ -20,9 +20,7 @@
     IS_DISABLED: 'is-disabled',
     IS_INVALID: 'is-invalid',
     IS_UPGRADED: 'is-upgraded',
-    IS_SELECTED: 'is-selected',
-	IS_OPTGROUP: 'is-optgroup',
-	IS_OPTION: 'is-option'
+    IS_SELECTED: 'is-selected'
   };
 
   MaterialSelectfield.prototype.Keycodes_ = {
@@ -403,8 +401,8 @@
   };
 
   MaterialSelectfield.prototype.makeElements_ = function () {
-	if (this.select_) {
-      this.options_ = this.select_.querySelectorAll('optGroup,option');
+    if (this.select_) {
+      this.options_ = this.select_.querySelectorAll('option');
       this.select_.style.opacity = "0";
       this.select_.style.zIndex = "-1";
 
@@ -423,37 +421,24 @@
 
         for (var i = 0; i < this.options_.length; i++) {
           var item = this.options_[i]
-            ,itemText = item.tagName.toLowerCase() == "option" ? (item.textContent || '').toUpperCase().replace(/( )|(\n)/g, "") : (item.getAttribute("label") || '').toUpperCase().replace(/( )|(\n)/g, "")
+            ,itemText = (item.textContent || '').toUpperCase().replace(/( )|(\n)/g, "")
             ,liClass = ''
             ;
 
           this.optionsMap_[itemText] = i;
           this.optionsArr_.push(itemText);
 
-		  if(item.tagName.toLowerCase() == "option"){
-			if(item.selected && item.textContent !== "") {
-			  this.element_.classList.add(this.CssClasses_.IS_DIRTY);
-			  this.selectedOptionValue_.textContent = item.textContent;
-			  liClass += this.CssClasses_.IS_SELECTED;
-			}
-		  }
+          if(item.selected && item.textContent !== "") {
+            this.element_.classList.add(this.CssClasses_.IS_DIRTY);
+            this.selectedOptionValue_.textContent = item.textContent;
+            liClass += this.CssClasses_.IS_SELECTED;
+          }
 
-          if(item.tagName.toLowerCase() == "option"){
-			if(item.disabled){
-			  liClass += liClass !== '' ? ' ' + this.CssClasses_.IS_DISABLED : this.CssClasses_.IS_DISABLED;
-			}
-			if(item.parentNode.tagName.toLowerCase() == "optgroup"){
-			  liClass += liClass !== '' ? ' ' + this.CssClasses_.IS_OPTION : this.CssClasses_.IS_OPTION;
-			}
-		  }
-		  else{
-			liClass += liClass !== '' ? ' ' + this.CssClasses_.IS_DISABLED : this.CssClasses_.IS_DISABLED;
-			liClass += ' ' + this.CssClasses_.IS_OPTGROUP;
-		  }
-		  
-		  var text = item.tagName.toLowerCase() == "option" ? item.textContent : item.getAttribute("label");
+          if(item.disabled) {
+            liClass += liClass !== '' ? ' ' + this.CssClasses_.IS_DISABLED : this.CssClasses_.IS_DISABLED
+          }
 
-          liHTML += '<li class="' + liClass + '" data-value="'+ i +'" tabindex="-1">' + text + '</li>';
+          liHTML += '<li class="' + liClass + '" data-value="'+ i +'" tabindex="-1">' + item.textContent + '</li>';
         }
 
         ul += liHTML + '</ul>';
@@ -530,8 +515,7 @@
   MaterialSelectfield.prototype.moveFromBoundary = function () {
 	  
 	var debug = false;  
-	var offsetVertical = 30;
-	var offsetHorizontal = 0;
+	var offset = 30;
 	
 	var isOutOfViewport = this.isOutOfViewport(this.listOptionBox_);
 	if(debug){
@@ -541,62 +525,32 @@
 	if(debug){
 	  console.log("moveFromBoundary(): rect: ",rect);
 	}
-	var moveDistanceVertical = rect.height;
+	var moveDistance = rect.height;
 	if(debug){
-	  console.log("moveFromBoundary(): moveDistanceVertical: ",moveDistanceVertical);
-	}
-	var moveDistanceHorizontal = rect.width;
-	if(debug){
-	  console.log("moveFromBoundary(): moveDistanceHorizontal: ",moveDistanceHorizontal);
+	  console.log("moveFromBoundary(): moveDistance: ",moveDistance);
 	}
 	var scrollTop = this.listOptionBox_.offsetTop;
 	if(debug){
 	  console.log("moveFromBoundary(): scrollTop: ",scrollTop);
 	}
-	var scrollLeft = this.listOptionBox_.offsetLeft;
-	if(debug){
-	  console.log("moveFromBoundary(): scrollLeft: ",scrollLeft);
-	}
-	
-	if(!isNaN(moveDistanceVertical) && !isNaN(moveDistanceHorizontal)){
+	if(!isNaN(moveDistance)){
 		
 	  if('bottom' in isOutOfViewport){
 		if(isOutOfViewport['bottom']){
-		  var top = parseInt(scrollTop - moveDistanceVertical); 
+		  var top = parseInt(scrollTop - moveDistance); 
 		  if(debug){
 			console.log("moveFromBoundary(): top 1: ",top);
 		  }
-		  this.listOptionBox_.style.top = (top - offsetVertical) + "px";
+		  this.listOptionBox_.style.top = (top - offset) + "px";
 		}
 		else{
 		  if(this.prev_isOutOfViewport && 'bottom' in this.prev_isOutOfViewport){
 			if(this.prev_isOutOfViewport['bottom']){
-			  var top = parseInt(scrollTop + moveDistanceVertical); 
+			  var top = parseInt(scrollTop + moveDistance); 
 			  if(debug){
 				console.log("moveFromBoundary(): top 2: ",top);
 			  }
-			  this.listOptionBox_.style.top = (top + offsetVertical) + "px";
-			}
-		  }
-		}
-	  }
-	  
-	  if('right' in isOutOfViewport){
-		if(isOutOfViewport['right']){
-		  var left = parseInt(scrollLeft - moveDistanceHorizontal); 
-		  if(debug){
-			console.log("moveFromBoundary(): right 1: ",left);
-		  }
-		  this.listOptionBox_.style.left = (left - offsetHorizontal) + "px";
-		}
-		else{
-		  if(this.prev_isOutOfViewport && 'right' in this.prev_isOutOfViewport){
-			if(this.prev_isOutOfViewport['right']){
-			  var left = parseInt(scrollLeft + moveDistanceHorizontal); 
-			  if(debug){
-				console.log("moveFromBoundary(): right 2: ",left);
-			  }
-			  this.listOptionBox_.style.left = (left + offsetHorizontal) + "px";
+			  this.listOptionBox_.style.top = (top + offset) + "px";
 			}
 		  }
 		}
@@ -604,47 +558,24 @@
 	  
 	  if('top' in isOutOfViewport){
 		if(isOutOfViewport['top']){
-		  var top = parseInt(scrollTop + moveDistanceVertical); 
+		  var top = parseInt(scrollTop + moveDistance); 
 		  if(debug){
 			console.log("moveFromBoundary(): top 1: ",top);
 		  }
-		  this.listOptionBox_.style.top = (top + offsetVertical) + "px";
+		  this.listOptionBox_.style.top = (top + offset) + "px";
 		}
 		else{
 		  if(this.prev_isOutOfViewport && 'top' in this.prev_isOutOfViewport){
 			if(this.prev_isOutOfViewport['top']){
-			  var top = parseInt(scrollTop - moveDistanceVertical); 
+			  var top = parseInt(scrollTop - moveDistance); 
 			  if(debug){
 				console.log("moveFromBoundary(): top 2: ",top);
 			  }
-			  this.listOptionBox_.style.top = (top - offsetVertical) + "px";
+			  this.listOptionBox_.style.top = (top - offset) + "px";
 			}
 		  }
 		}
 	  }
-	  
-	  if('left' in isOutOfViewport){
-		if(isOutOfViewport['left']){
-		  var left = parseInt(scrollLeft + moveDistanceHorizontal); 
-		  if(debug){
-			console.log("moveFromBoundary(): left 1: ",left);
-		  }
-		  this.listOptionBox_.style.left = (left + offsetHorizontal) + "px";
-		}
-		else{
-		  if(this.prev_isOutOfViewport && 'left' in this.prev_isOutOfViewport){
-			if(this.prev_isOutOfViewport['left']){
-			  var left = parseInt(scrollLeft - moveDistanceHorizontal); 
-			  if(debug){
-				console.log("moveFromBoundary(): left 2: ",left);
-			  }
-			  this.listOptionBox_.style.left = (left - offsetHorizontal) + "px";
-			}
-		  }
-		}
-	  }
-	  
-	  
 	  
 	}
 	
